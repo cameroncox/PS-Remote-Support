@@ -111,11 +111,6 @@ Function User-Logout {
                 Pause
                 Get-Menu
             }
-        
-            # Otherwise, proceed
-            Else
-            {
-            }
         }
     }
     
@@ -161,12 +156,7 @@ Function Test-Ping {
     Ping $ComputerName -n 1 | Out-Null
 
     # Proceed if device responds
-    If ($LASTEXITCODE -Eq 0)
-    {
-    }
-    
-    # Display message otherwise
-    Else
+    If ($LASTEXITCODE -ne 0)
     {
         Write-Host "Unable to reach computer"
         Pause
@@ -187,12 +177,6 @@ Function Test-User {
         Pause
         Get-Menu
     }
-
-    # Proceed if username is valid
-    Else
-    {
-    }
-
 } # Verify username is valid
 
 Function Test-UserProfile {
@@ -201,19 +185,14 @@ Function Test-UserProfile {
     $PathTest = Invoke-Command -Computer $ComputerName -ScriptBlock {Test-Path "C:\Users\$Using:Username"}
     
     # If the path exists, proceed
-    If ($PathTest -eq $True)
+    If ($PathTest -ne $True)
     {
-    }
+        Write-Host ""
+        Write-Host "User does not have a profile on this computer"
+        Write-Host ""
 
-    # Otherwise, pause
-    Else
-    {
-    Write-Host ""
-    Write-Host "User does not have a profile on this computer"
-    Write-Host ""
-
-    Pause
-    Get-Menu
+        Pause
+        Get-Menu
     }
 
 } # Verify that the target user has previously logged in to the target computer
@@ -236,13 +215,8 @@ Function Test-DriveLetter {
     Remove-PSDrive HKU
     }
 
-    # If the drive letter doesn't exist, continue
-    If ($RegPathTest -eq $False)
-    {
-    }
-
-    # Otherwise, pause
-    Else
+    # If the drive letter does exit, go back to the menu
+    If ($RegPathTest -ne $False)
     {
         Write-Host ""
         Write-Host "User already has this drive letter mapped"
@@ -322,11 +296,6 @@ Function Get-UserInfo {
             # Unlock the account
             Unlock-ADAccount -Identity $Username
             Write-Host "User unlocked."
-        }
-
-    # Otherwise, pause
-    Else
-        {
         }
 
     Pause
